@@ -2,7 +2,7 @@
 
 ## This is an AngularJS front-end demonstrting the usage of a cross-origin Laravel back-end JSON API found at [api.mylesshannon.me](https://github.com/MylesShannon/api.mylesshannon.me)
 
-### Acquiring required libraries and dependencies for compiling src (front-end)
+### Acquiring required libraries and dependencies for compiling src
 ```sh
 npm install
 bower install
