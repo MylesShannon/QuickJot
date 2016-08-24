@@ -1,6 +1,6 @@
 # QuickJot  |  "Making it quick"
 
-## This is an AngularJS front-end demonstrting the usage of a cross-origin Laravel back-end JSON API found at [api.mylesshannon.me](https://github.com/MylesShannon/api.mylesshannon.me)
+## This is an AngularJS front-end demonstrting the usage of a cross-origin Laravel back-end JSON API found at [(php|rails).mylesshannon.me](https://github.com/MylesShannon/php.mylesshannon.me)
 
 ### Acquiring required libraries and dependencies for compiling src
 ```sh
