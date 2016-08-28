@@ -1,7 +1,10 @@
 app.config(function($provide, $routeProvider, $locationProvider, $httpProvider, $authProvider, toastrConfig, constants) {
-	$provide.factory('XSRFInterceptor', function($cookies) {
+	$provide.factory('XSRFInterceptor', function($cookies, apiSource, constants) {
 		return {
 			request: function(config) {
+        if(config.url.indexOf(constants.api) === 0 && config.url.indexOf(apiSource.url) === -1) {
+          config.url = apiSource.url + '/' + config.url.split('/').slice(3).join('/');
+        }
 				var cookie = $cookies.get('XSRF-TOKEN');
 				if(cookie) {
 					config.headers['X-XSRF-TOKEN'] = cookie;
@@ -31,7 +34,7 @@ app.config(function($provide, $routeProvider, $locationProvider, $httpProvider, 
 		controllerAs: 'index',
 		resolve: {
 			check: function(auth) {
-				return auth.check('index');
+				return auth.check('index').catch(function(){});
 			}
 		}
 	})
@@ -41,7 +44,7 @@ app.config(function($provide, $routeProvider, $locationProvider, $httpProvider, 
 		controllerAs: 'notes',
 		resolve: {
 			check: function(auth) {
-				return auth.check('notes');
+				return auth.check('notes').catch(function(){});
 			}
 		}
 	});

@@ -43,6 +43,13 @@
 						<li data-ng-if="!session.loggedIn" data-ng-class="{active: nav.active==='login'}"><a id="signin-button" data-ng-click="nav.login('google')"><img ng-src="{{session.host + '/assets/signin_button.png'}}" /></a></li>
 						<li data-ng-if="session.loggedIn"><a data-ng-click="nav.logout()">logout</a></li>
 					</ul>
+          <form class="navbar-form navbar-right">
+            <div class="form-group">
+              <label>API: </label>
+              <select ng-model="nav.apiSource" ng-options="source.label for source in nav.sources"></select>
+            </div>
+            <button ng-click="nav.setApiSource()" class="btn btn-default">Set</button>
+          </form>
 				</div>
 			</div>
 		</nav>

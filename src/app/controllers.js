@@ -1,5 +1,5 @@
-app.controller('IndexCtrl', function($http, $rootScope) {
-	$rootScope.session.transitioning = false;
+app.controller('IndexCtrl', function($rootScope) {
+  
 })
 .controller('NotesCtrl', function($http, $rootScope, toastr) {
 	$rootScope.session.transitioning = false;
@@ -37,11 +37,48 @@ app.controller('IndexCtrl', function($http, $rootScope) {
 		});
 	};
 })
-.controller('NavCtrl', function($scope, $rootScope, auth) {
+.controller('NavCtrl', function($scope, $rootScope, auth, apiSource, constants, auth, toastr, $http) {
 	var self = this;
 	$scope.$on('$routeChangeSuccess', function(event, next, last) {
 		self.active = next.$$route.controllerAs;
 	});
+
+  this.sources = [{
+    id: 1,
+    label: 'Ruby on Rails',
+    value: constants.api
+  }, {
+    id: 2,
+    label: 'Laravel PHP',
+    value: constants.phpApi
+  }];
+  this.apiSource = (function() {
+    for(var i = 0; i < self.sources.length; i++) {
+      if(self.sources[i].value === constants.api) {
+        return self.sources[i];
+      }
+    }
+  })()
+
+  this.setApiSource = function() {
+    if(self.apiSource.value !== apiSource.url) {
+      $rootScope.session.transitioning = true;
+      // Renew token with new API
+      $http({
+        url: self.apiSource.value,
+        method: 'GET'
+      }).success(function() {
+        apiSource.url = self.apiSource.value;
+        toastr.success('New API set', 'Success');
+        if($rootScope.session.loggedIn === true) {
+          auth.logout()
+        }
+        $rootScope.session.transitioning = false;
+      }).error(function() {
+        $rootScope.session.transitioning = false;
+      })
+    }
+  }
 
 	this.login = function(provider) {
 		auth.login(provider);

@@ -1,4 +1,13 @@
-app.service('auth', function($rootScope, $auth, $location, $q, constants, toastr, $http) {
+app.service('apiSource', function(constants) {
+  self = this;
+
+  self.url = constants.api;
+  
+  self.set = function(source) {
+    self.url = source;
+  }
+})
+.service('auth', function($rootScope, $auth, $location, $q, constants, toastr, $http, $timeout) {
 	var self = this;
 
 	this.check = function(state) {
@@ -17,15 +26,20 @@ app.service('auth', function($rootScope, $auth, $location, $q, constants, toastr
 				self.getUserData().then(function(resp) {
 					$rootScope.session.user = resp;
 					$rootScope.session.loggedIn = true;
+          $rootScope.session.transitioning = false;
 					deffered.resolve();
-				});
+				}).catch(function() {
+          deffered.reject();
+        });
 			} else {
 				$rootScope.session.loggedIn = true;
+        $rootScope.session.transitioning = false;
 				deffered.resolve();
 			}
 		} else {
 			$rootScope.session.loggedIn = false;
 			if(requireIn(state)) { $location.path('/'); }
+      $rootScope.session.transitioning = false;
 			deffered.resolve();
 		}
 		return deffered.promise;
@@ -33,20 +47,18 @@ app.service('auth', function($rootScope, $auth, $location, $q, constants, toastr
 
 	self.login = function(provider) {
 		$rootScope.session.transitioning = true;
-		setTimeout(function() {toastr.info('Logging you in...');}, 600);
 		$auth.authenticate(provider).then(function() {
 			self.getUserData().then(function(resp) {
 				$rootScope.session.user = resp;
 				$rootScope.session.transitioning = false;
 				$rootScope.session.loggedIn = true;
 				toastr.success('You were logged in!', 'Success');
-				return $location.path('/notes');
+				$location.path('/notes');
 			});
 		}).catch(function() {
 			$rootScope.session.transitioning = false;
 			$rootScope.session.loggedIn = false;
 			toastr.error('Something went wrong logging you in!', 'Error');
-			return;
 		});
 	};
 
@@ -57,20 +69,22 @@ app.service('auth', function($rootScope, $auth, $location, $q, constants, toastr
 			$rootScope.session.transitioning = false;
 			$rootScope.session.loggedIn = false;
 			toastr.success('You were logged out!', 'Success');
-			return $location.path('/');
+			$location.path('/');
 		}).catch(function() {
 			$rootScope.session.transitioning = false;
 			$rootScope.session.loggedIn = true;
 			toastr.error('Something went wrong logging you out!', 'Error');
-			return;
 		});
 	};
 
 	self.getUserData = function() {
 		var deffered = $q.defer();
-		$http({url: $rootScope.session.api+'/user', method: 'GET'}).then(function(resp) {
+		$http({url: $rootScope.session.api+'/user', method: 'GET'}).success(function(resp) {
 			deffered.resolve(resp.data);
-		});
+		}).error(function() {
+      self.logout();
+      deffered.reject();
+    });
 		return deffered.promise;
 	};
 });
