@@ -80,7 +80,7 @@ app.service('apiSource', function(constants) {
 	self.getUserData = function() {
 		var deffered = $q.defer();
 		$http({url: $rootScope.session.api+'/user', method: 'GET'}).success(function(resp) {
-			deffered.resolve(resp.data);
+			deffered.resolve(resp);
 		}).error(function() {
       self.logout();
       deffered.reject();
