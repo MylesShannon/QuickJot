@@ -24,6 +24,7 @@
   },
   "homepage": "https://jot.mylesshannon.me",
   "devDependencies": {
+    "bootstrap-sass": "^3.3.7",
     "connect-livereload": "^0.5.4",
     "connect-modrewrite": "^0.9.0",
     "grunt": "^1.0.1",
