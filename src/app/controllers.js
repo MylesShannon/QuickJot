@@ -5,14 +5,14 @@ app.controller('IndexCtrl', function($rootScope) {
 	$rootScope.session.transitioning = false;
 	self = this;
 	this.disable = false;
-	$http({url: $rootScope.session.api+'/note', method: 'GET'}).success(function(resp) {
-		self.notes = resp;
+	$http({url: $rootScope.session.api+'/note', method: 'GET'}).then(function(resp) {
+		self.notes = resp.data;
 	}).catch(function() {
 
 	});
 	this.noteSubmit = function() {
 		self.disable = true;
-		$http({url: $rootScope.session.api+'/note', method: 'POST', params: {'title': self.form.title, 'subtitle': self.form.subtitle, 'body': self.form.body}}).success(function(resp) {
+		$http({url: $rootScope.session.api+'/note', method: 'POST', params: {'title': self.form.title, 'subtitle': self.form.subtitle, 'body': self.form.body}}).then(function(resp) {
       self.notes.push({'id': resp.id, 'title': self.form.title, 'subtitle': self.form.subtitle, 'body': self.form.body});
 			self.form.title = null;
 			self.form.body = null;
@@ -25,7 +25,7 @@ app.controller('IndexCtrl', function($rootScope) {
 		});
 	};
 	this.removeNote = function(id) {
-		$http({url: $rootScope.session.api+'/note/'+id, method: 'DELETE'}).success(function() {
+		$http({url: $rootScope.session.api+'/note/'+id, method: 'DELETE'}).then(function() {
 			for(var i = 0; i < self.notes.length; i++) {
 				if(self.notes[i].id === id) {
 					self.notes.splice(i, 1);
@@ -74,7 +74,7 @@ app.controller('IndexCtrl', function($rootScope) {
       $http({
         url: self.apiSource.value,
         method: 'GET'
-      }).success(function() {
+      }).then(function() {
         apiSource.url = self.apiSource.value;
         toastr.success('New API set', 'Success');
         if($rootScope.session.loggedIn === true) {

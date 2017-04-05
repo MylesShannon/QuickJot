@@ -26,20 +26,20 @@ app.service('apiSource', function(constants) {
 				self.getUserData().then(function(resp) {
 					$rootScope.session.user = resp;
 					$rootScope.session.loggedIn = true;
-          $rootScope.session.transitioning = false;
+          			$rootScope.session.transitioning = false;
 					deffered.resolve();
 				}).catch(function() {
-          deffered.reject();
-        });
+          			deffered.reject();
+        		});
 			} else {
 				$rootScope.session.loggedIn = true;
-        $rootScope.session.transitioning = false;
+        		$rootScope.session.transitioning = false;
 				deffered.resolve();
 			}
 		} else {
 			$rootScope.session.loggedIn = false;
 			if(requireIn(state)) { $location.path('/'); }
-      $rootScope.session.transitioning = false;
+      		$rootScope.session.transitioning = false;
 			deffered.resolve();
 		}
 		return deffered.promise;
@@ -79,12 +79,12 @@ app.service('apiSource', function(constants) {
 
 	self.getUserData = function() {
 		var deffered = $q.defer();
-		$http({url: $rootScope.session.api+'/user', method: 'GET'}).success(function(resp) {
-			deffered.resolve(resp);
-		}).error(function() {
-      self.logout();
-      deffered.reject();
-    });
+		$http({url: $rootScope.session.api+'/user', method: 'GET'}).then(function(resp) {
+			deffered.resolve(resp.data);
+		}).catch(function() {
+      		self.logout();
+      		deffered.reject();
+    	});
 		return deffered.promise;
 	};
 });
