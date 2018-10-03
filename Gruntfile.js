@@ -24,8 +24,7 @@ module.exports = function(grunt) {
 		},
 		sass: {
 			options: {
-				style: 'compact',
-				sourcemap: 'none'
+				style: 'compressed'
 			},
 			front: {
 				src: './src/styles.scss',
